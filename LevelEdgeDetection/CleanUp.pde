@@ -11,10 +11,8 @@ int [][]dImage = new int [1280][720]; //array for saving the image for collision
 
 void setup() {
   size(1280,720, P3D);
-  frameRate(60);
-   
-   
-  gameMode = new GameStart ();
+  frameRate(60);   
+  gameMode = new GUI();
   
 }
 

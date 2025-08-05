@@ -85,7 +85,7 @@ class StageMenu extends GameMode {
       for (Button a : stageButtons) {
         if (a.pressed==true) {
 
-          gameMode = new HomeMode(a.type);
+
         }
       }
     }
