@@ -1,4 +1,4 @@
-abstract class GameMode {
+abstract class Interface {
   void draw() { 
   }
   void mouseClicked() {

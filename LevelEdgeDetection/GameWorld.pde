@@ -1,6 +1,5 @@
 class GameWorld {
 
-  java.util.LinkedList<GameObject> gameObjects; 
   java.util.LinkedList<Dust> dustObjects;
   java.util.LinkedList<Dust> dustToKeep;// all game objects
 
@@ -52,12 +51,10 @@ class GameWorld {
     level_3_top.resize(1280, 720);
 
 
-    gameObjects = new java.util.LinkedList<GameObject>();
+
     dustObjects = new java.util.LinkedList<Dust>();
 
-    directionImage();
-    dircetionColorsImage();
-    spawnDust();
+    //spawnDust();
   }
 
   void draw() {     
@@ -69,7 +66,7 @@ class GameWorld {
 
 
     //Draw Dust
-    for (GameObject d : dustObjects) {
+    for (Dust d : dustObjects) {
       d.draw();
     }
 
@@ -77,50 +74,8 @@ class GameWorld {
     popMatrix();
   }
 
-//calculation where the walls are and writing it in a 2D array and coloring horizontal walls black and vertical walls white
-  void directionImage() {
-
-    for (int y =0; y<level.height; y++) {
-      for (int x=0; x<level.width; x++) {
-        if (level.get(x, y)==color(0, 0, 0, 0)&&level.get(x+1, y)==color(0, 0, 0, 0)) {
-          dImage [x][y]=color(0, 0, 0, 0);
-          counter++;
-        } else {
-          dImage [x][y]=color(abs(red(level.get(x, y))-red(level.get(x+1, y))));
-
-          // println(counter, (abs(red(level.get(x, y))-red(level.get(x+1, y)))), x, y, red(level.get(x+1, y)), red(level.get(1, y)) );
-          counter++;
-        }
-      }
-    }
-    counter = 0;
-  }
-
-//taking the image from above to color the walls in four different colors to know in which direction the Roomba has to be pushed back when colliding with a wall
-
-  void dircetionColorsImage() {
-    for (int y =0; y<level.height; y++) {
-      for (int x=0; x<level.width; x++) {
-        try {
-          if (dImage[x][y]==color(255) && dImage[x+1][y]==color(0, 0, 0, 0)) {
-            dImage[x][y]=color(0, 255, 0);
-          } else if (dImage[x][y]==color(255) && dImage[x-1][y]==color(0, 0, 0, 0)) {
-            dImage[x][y]=color(0, 255, 255);
-          } else if (dImage[x][y]==color(0) && dImage[x][y+1]==color(0, 0, 0, 0)) {
-            dImage[x][y]=color(255, 0, 0);
-          } else if (dImage[x][y]==color(0) && dImage[x][y-1]==color(0, 0, 0, 0)) {
-            dImage[x][y]=color(255, 255, 0);
-          }
-        }
-        catch(Exception e) {
-          continue;
-        }
-      }
-    }
-  }
-
 //filling the level up with dust while taking into consideration where the Roomba and walls are 
-  void spawnDust() {
+/*  void spawnDust() {
 
     Dust dust;
 
@@ -145,5 +100,5 @@ class GameWorld {
         }
       }
     }
-  } 
-}
+  } */
+} 

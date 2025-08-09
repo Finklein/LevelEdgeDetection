@@ -1,18 +1,4 @@
-abstract class GameObject {
-
-  GameWorld gameWorld;
-
-  GameObject(GameWorld _gameWorld) {
-    gameWorld = _gameWorld;
-  }
-  void CollideLevel() {
-  }
-  abstract void draw();
-}
-
-
-
-class Dust extends GameObject {
+class Dust {
 
   PImage dustSprite = loadImage("dustSprite.png");
   PImage dustSprite_v2= loadImage("dustSprite_v2.png");
@@ -22,9 +8,7 @@ class Dust extends GameObject {
   float radius;
   float dustRotation;
 
-  Dust(GameWorld _gameWorld, float x, float y, float _dustRotation, int _dustSprite_index) {
-
-    super(_gameWorld);
+  Dust( float x, float y, float _dustRotation, int _dustSprite_index) {
     position = new PVector(x, y); 
     dustRotation = _dustRotation;
     radius = 10;
