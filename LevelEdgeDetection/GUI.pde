@@ -1,5 +1,7 @@
 class GUI extends Interface {
   int stageType; //variable to store which stage was chosen
+  
+  java.util.LinkedList<Button> displayButtons;
 
   PImage titleScreen;
   PImage none;
@@ -20,6 +22,7 @@ class GUI extends Interface {
 
   PImage nextSelected;
   PImage buttonSelected;
+  PImage button_p2_selected;
 
   int scaleFacWidth;
   int scaleFacHeight;
@@ -38,8 +41,8 @@ class GUI extends Interface {
 
     titleScreen = loadImage("bg_screen.png");
     roombaSelectMenu = loadImage("roombaSelectionButton.png");
-    button_red = loadImage("bgResult_p1.png");
-    button_blue = loadImage("bgResult_p2.png");
+    button_blue = loadImage("bgResult_p1.png");
+    button_red = loadImage("bgResult_p2.png");
     
     button_sq_r = loadImage("button_p1.png");
     button_sq_b = loadImage("button_p2.png");
@@ -49,6 +52,7 @@ class GUI extends Interface {
 
     nextSelected = loadImage("startButtonSelected.png");
     buttonSelected = loadImage("buttonSelected.png");
+    button_p2_selected = loadImage("button_p2_selected.png");
 
 
     scaleFacWidth =width/6;
@@ -56,18 +60,24 @@ class GUI extends Interface {
     hight= height/3;
     widthres = (width/2)-(scaleFacWidth/2);
 
-    next = new Button(width/8, height*3/4 - (button_blue.height/4)/2, button_blue.width/4 * 2, button_blue.height/4 , "Create Collision Image", width/8, height*3/4, 20 ,false, button_blue.height/2 , button_blue, nextSelected);
-    loadDispImg = new Button(width/8, height*5/6 - (button_red.height/4)/2, button_red.width/4 * 2,button_red.height/4, "Load Display Image", width/8, height*5/6, 20, false, button_red.height/2, button_red, nextSelected);
+    next = new Button(width/8, height*2/3, button_blue.width/4, button_blue.height/4 , "Create Collision Image", width/3.3, height*2.8/4, 25 ,false, button_blue.height/2 , button_blue, nextSelected);
+    loadDispImg = new Button(width/8, height*5/6, button_red.width/4,button_red.height/4, "Load Display Image", width/3.3, height*7/8, 25, false, button_red.height/2, button_red, button_p2_selected);
     
-    ColImg = new Button(width/2, height*3/4, button_sq_r.width/4, button_sq_r.height/4, "Collision Image", width, height, 10, false, 1, button_sq_r, buttonSelected);
-    DispImg = new Button(widthres, hight+250, scaleFacWidth, scaleFacHeight, "", widthres, hight+190, 10, false, 1, button_sq_b, buttonSelected);
-    ShowDust = new Button(widthres, hight+250, scaleFacWidth, scaleFacHeight, "", widthres, hight+190, 10, false, 1, button_sq_r, buttonSelected);
+    ColImg = new Button(width/1.8, height*2/3, button_sq_r.width/8, button_sq_r.height/8, "Show Collision Image", width/1.6, height*3/4.2, 25, false, 1, button_sq_r, buttonSelected);
+    DispImg = new Button(width/1.8, height*3/4, button_sq_r.width/8, button_sq_r.height/8, "Show Display Image",  width/1.6, height*5/6.3, 25, false, 1, button_sq_b, buttonSelected);
+    ShowDust = new Button(width/1.8, height*5/6, button_sq_r.width/8, button_sq_r.height/8, "Show Dust",  width/1.6, height*7/8, 25, false, 1, button_sq_r, buttonSelected);
 
     cImage = loadImage("room_3_collision.png");
     cImage.resize(cImage.width/4, cImage.height/4);
 
     selected = loadImage("room_3_collision.png");
     selected.resize(selected.width/4, selected.height/4);
+    
+    
+    displayButtons = new java.util.LinkedList<Button>();
+    displayButtons.add(ColImg);
+    displayButtons.add(DispImg);
+    displayButtons.add(ShowDust);
 
 
     //directionImage();
@@ -90,18 +100,20 @@ class GUI extends Interface {
 
     text("Level Edge Detection", width/2, height/8);
     //image(level, (width/4) - level.width/2, height/4);
-    image(cImage, (width*3/4) - cImage.width/2, height/4);
+    image(cImage, (width/1.8), height/4);
     popStyle();
 
     next.draw();
     loadDispImg.draw();
-    ColImg.draw();
-    //DispImg.draw();
-    //ShowDust.draw();
+    for (Button a : displayButtons) {
+
+      a.draw();
+    }
   }
 
   void dircetionColorsImage(PImage selected, PImage cImage) {
     int [][]dImage = new int [selected.width][selected.height]; //array for saving the image for collision detection
+    //cImage = selected.copy();
 
     //calculation where the walls are and writing it in a 2D array and coloring horizontal walls black and vertical walls white
     for (int y =0; y<selected.height; y++) {
@@ -148,10 +160,17 @@ class GUI extends Interface {
   }
 
   void mouseClicked() {
+    for (Button a : displayButtons) {
+
+      if (a.overRect()==true) {
+        buttonClicked(displayButtons);
+      }
+    }
 
 
     if (next.overRect()==true) {
       selectInput("Select an image to process:", "fileSelected");
+      cImage = selected.copy();
       dircetionColorsImage(selected, cImage);
     }
   }
@@ -232,6 +251,26 @@ class Button {
     } else {
 
       return false;
+    }
+  }  
+}
+  
+//sets pressed to true and plays a click sound
+void buttonClicked( java.util.LinkedList<Button> buttons ) {
+  for (Button b : buttons) {
+
+    if (b.overRect()==true) {
+      if(b.pressed == true){
+       b.pressed = false; 
+      }else{
+      b.pressed=true;
+
+      //for (Button a_1 : buttons) {
+     //   if (b!=a_1 && a_1.pressed==true) {
+      //    a_1.pressed=false;
+       // }
+     // }
+      }
     }
   }
 }
