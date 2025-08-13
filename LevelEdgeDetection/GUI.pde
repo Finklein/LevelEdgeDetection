@@ -15,7 +15,6 @@ class GUI extends Interface {
   Button DispImg;
   Button ShowDust;
   
-  PImage roombaSelectMenu;
   PImage button_red;
   PImage button_blue;
   
@@ -45,7 +44,6 @@ class GUI extends Interface {
   GUI() {
 
     titleScreen = loadImage("bg_screen.png");
-    roombaSelectMenu = loadImage("roombaSelectionButton.png");
     button_blue = loadImage("bgResult_p1.png");
     button_red = loadImage("bgResult_p2.png");
     
@@ -68,7 +66,7 @@ class GUI extends Interface {
     next = new Button(width/8, height*2/3, button_blue.width/4, button_blue.height/4 , "Create Collision Image", width/3.3, height*2.8/4, 25 ,false, button_blue.height/2 , button_blue, nextSelected);
     loadDispImg = new Button(width/8, height*5/6, button_red.width/4,button_red.height/4, "Load Display Image", width/3.3, height*7/8, 25, false, button_red.height/2, button_red, button_p2_selected);
     
-    ColImg = new Button(width/1.8, height*2/3, button_sq_r.width/8, button_sq_r.height/8, "Show Collision Image", width/1.6, height*3/4.2, 25, false, 1, button_sq_r, buttonSelected);
+    ColImg = new Button(width/1.8, height*2/3, button_sq_r.width/8, button_sq_r.height/8, "Show Collision Image", width/1.6, height*3/4.2, 25, true, 1, button_sq_r, buttonSelected);
     DispImg = new Button(width/1.8, height*3/4, button_sq_r.width/8, button_sq_r.height/8, "Show Display Image",  width/1.6, height*5/6.3, 25, false, 1, button_sq_b, buttonSelected);
     ShowDust = new Button(width/1.8, height*5/6, button_sq_r.width/8, button_sq_r.height/8, "Show Dust",  width/1.6, height*7/8, 25, false, 1, button_sq_r, buttonSelected);
 
@@ -81,6 +79,8 @@ class GUI extends Interface {
     colSelected = loadImage("room_3_collision.png");
     colSelected.resize(colSelected.width/4, colSelected.height/4);
     
+    //dispSelected = loadImage("room_3_design.png");
+    //dispSelected.resize(dispSelected.width/4, dispSelected.height/4);
     
     displayButtons = new java.util.LinkedList<Button>();
     displayButtons.add(ColImg);
@@ -102,24 +102,65 @@ class GUI extends Interface {
     textAlign(CENTER, CENTER);
     textSize(64);
 
+//loaded collision image design
     if (colSelected!=null) {
       image(colSelected, (width/4) - level.width/2, height/4);
     }
-
+    
     text("Level Edge Detection", width/2, height/8);
     //image(level, (width/4) - level.width/2, height/4);
+
+   //calculated collision image
+    if(cImage != null && ColImg.pressed == true){
     image(cImage, (width/1.8), height/4);
+    }
+    
+    if (dispSelected != null && DispImg.pressed == true){
+      image(dispSelected, (width/1.8), height/4);
+    }
+    
     popStyle();
 
     next.draw();
     loadDispImg.draw();
     for (Button a : displayButtons) {
-
       a.draw();
     }
   }
 
-  void dircetionColorsImage(PImage select, PImage cImage) {
+  void mouseClicked() {
+    for (Button a : displayButtons) {
+
+      if (a.overRect()==true) {
+        buttonClicked(displayButtons);
+        println("Button pressed" + a);
+      }
+    }
+
+    if (next.overRect()==true) {
+      selectInput("Select an image to process:", "fileSelected");
+      println((File)fileQueue.get());
+      cImage = selected.copy();
+      colSelected = selected.copy();
+      dircetionColorsImage(colSelected, cImage);
+    }
+    if(loadDispImg.overRect()==true){
+      selectInput("Select an image to process:", "fileSelected");
+      println((File)fileQueue.get());
+      dispSelected = selected.copy();
+     }
+  }
+
+  /// let's the user choose an image to color the edges of
+  void fileSelected(File selection) {
+    if (selection == null) {
+      println("Window was closed or the user hit cancel.");
+    } else {
+      println("User selected " + selection.getAbsolutePath());
+      selected = loadImage(selection.getAbsolutePath());
+    }
+  }
+    void dircetionColorsImage(PImage select, PImage cImage) {
     int [][]dImage = new int [select.width][select.height]; //array for saving the image for collision detection
     //cImage = selected.copy();
 
@@ -165,38 +206,6 @@ class GUI extends Interface {
       }
     }
     println("changed direction image");
-  }
-
-  void mouseClicked() {
-    for (Button a : displayButtons) {
-
-      if (a.overRect()==true) {
-        buttonClicked(displayButtons);
-      }
-    }
-
-    if (next.overRect()==true) {
-      selectInput("Select an image to process:", "fileSelected");
-      println((File)fileQueue.get());
-      cImage = selected.copy();
-      colSelected = selected.copy();
-      dircetionColorsImage(colSelected, cImage);
-    }
-    if(loadDispImg.overRect()==true){
-      selectInput("Select an image to process:", "fileSelected");
-      println((File)fileQueue.get());
-      dispSelected = selected.copy();
-     }
-  }
-
-  /// let's the user choose an image to color the edges of
-  void fileSelected(File selection) {
-    if (selection == null) {
-      println("Window was closed or the user hit cancel.");
-    } else {
-      println("User selected " + selection.getAbsolutePath());
-      selected = loadImage(selection.getAbsolutePath());
-    }
   }
 }
 class Button {
