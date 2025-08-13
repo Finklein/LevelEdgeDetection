@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+
 class GUI extends Interface {
   int stageType; //variable to store which stage was chosen
   
@@ -23,6 +25,9 @@ class GUI extends Interface {
   PImage nextSelected;
   PImage buttonSelected;
   PImage button_p2_selected;
+  
+  PImage colSelected;
+  PImage dispSelected;
 
   int scaleFacWidth;
   int scaleFacHeight;
@@ -72,6 +77,9 @@ class GUI extends Interface {
 
     selected = loadImage("room_3_collision.png");
     selected.resize(selected.width/4, selected.height/4);
+
+    colSelected = loadImage("room_3_collision.png");
+    colSelected.resize(colSelected.width/4, colSelected.height/4);
     
     
     displayButtons = new java.util.LinkedList<Button>();
@@ -94,8 +102,8 @@ class GUI extends Interface {
     textAlign(CENTER, CENTER);
     textSize(64);
 
-    if (selected!=null) {
-      image(selected, (width/4) - level.width/2, height/4);
+    if (colSelected!=null) {
+      image(colSelected, (width/4) - level.width/2, height/4);
     }
 
     text("Level Edge Detection", width/2, height/8);
@@ -111,19 +119,19 @@ class GUI extends Interface {
     }
   }
 
-  void dircetionColorsImage(PImage selected, PImage cImage) {
-    int [][]dImage = new int [selected.width][selected.height]; //array for saving the image for collision detection
+  void dircetionColorsImage(PImage select, PImage cImage) {
+    int [][]dImage = new int [select.width][select.height]; //array for saving the image for collision detection
     //cImage = selected.copy();
 
     //calculation where the walls are and writing it in a 2D array and coloring horizontal walls black and vertical walls white
-    for (int y =0; y<selected.height; y++) {
-      for (int x=0; x<selected.width; x++) {
-        if (selected.get(x, y)==color(0, 0, 0, 0)&&selected.get(x+1, y)==color(0, 0, 0, 0)) {
+    for (int y =0; y<select.height; y++) {
+      for (int x=0; x<select.width; x++) {
+        if (select.get(x, y)==color(0, 0, 0, 0)&&select.get(x+1, y)==color(0, 0, 0, 0)) {
           dImage [x][y]=color(0, 0, 0, 0);
           cImage.set(x, y, dImage[x][y]);
           counter++;
         } else {
-          dImage [x][y]=color(abs(red(selected.get(x, y))-red(selected.get(x+1, y))));
+          dImage [x][y]=color(abs(red(select.get(x, y))-red(select.get(x+1, y))));
           cImage.set(x, y, dImage[x][y]);
 
           // println(counter, (abs(red(level.get(x, y))-red(level.get(x+1, y)))), x, y, red(level.get(x+1, y)), red(level.get(1, y)) );
@@ -134,8 +142,8 @@ class GUI extends Interface {
     counter = 0;
 
     //taking the image from above to color the walls in four different colors to know in which direction the Roomba has to be pushed back when colliding with a wall
-    for (int y =0; y<selected.height; y++) {
-      for (int x=0; x<selected.width; x++) {
+    for (int y =0; y<select.height; y++) {
+      for (int x=0; x<select.width; x++) {
         try {
           if (dImage[x][y]==color(255) && dImage[x+1][y]==color(0, 0, 0, 0)) {
             dImage[x][y]=color(0, 255, 0);
@@ -167,12 +175,18 @@ class GUI extends Interface {
       }
     }
 
-
     if (next.overRect()==true) {
       selectInput("Select an image to process:", "fileSelected");
+      println((File)fileQueue.get());
       cImage = selected.copy();
-      dircetionColorsImage(selected, cImage);
+      colSelected = selected.copy();
+      dircetionColorsImage(colSelected, cImage);
     }
+    if(loadDispImg.overRect()==true){
+      selectInput("Select an image to process:", "fileSelected");
+      println((File)fileQueue.get());
+      dispSelected = selected.copy();
+     }
   }
 
   /// let's the user choose an image to color the edges of
@@ -273,4 +287,49 @@ void buttonClicked( java.util.LinkedList<Button> buttons ) {
       }
     }
   }
+}
+
+
+
+
+
+
+class MessageQueue //Source: https://gist.github.com/fukuchi/5618340.html
+{
+  private LinkedList queue;
+
+  public MessageQueue()
+  {
+    queue = new LinkedList();
+  }
+
+  synchronized public void put(Object value)
+  {
+    queue.addLast(value);
+    notifyAll();
+  }
+
+  synchronized public Object get()
+  {
+    while (queue.isEmpty ()) {
+      try {
+        wait();
+      } 
+      catch (InterruptedException e) {
+      }
+    }
+    return queue.removeFirst();
+  }
+}
+
+MessageQueue fileQueue = new MessageQueue();
+
+/*void fileSelected(File selection)
+{
+  fileQueue.put(selection);
+} */
+
+void folderSelected(File selection)
+{
+  fileQueue.put(selection);
 }
